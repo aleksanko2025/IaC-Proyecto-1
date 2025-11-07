@@ -31,7 +31,7 @@ locals {
     red-datos = {
       name      = "red-datos"
       mode      = "none" # sin conectividad
-      bridge    = "br-datos"
+      bridge    = "br-datos-iac"
       autostart = true
     }
   }
@@ -42,7 +42,7 @@ locals {
 
   servers = {
     apache2 = {
-      name       = "apache2"
+      name       = "apache2iac"
       memory     = 1024
       vcpu       = 1
       base_image = "debian13-base.qcow2"
@@ -58,7 +58,7 @@ locals {
     }
 
     mariadb = {
-      name       = "mariadb"
+      name       = "mariadbiac"
       memory     = 1024
       vcpu       = 1
       base_image = "ubuntu2404-base.qcow2"

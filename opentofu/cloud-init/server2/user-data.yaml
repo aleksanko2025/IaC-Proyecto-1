@@ -1,5 +1,5 @@
 #cloud-config
-hostname: mariadb
+hostname: mariadbIaC
 users:
   - name: ubuntu
     sudo: ALL=(ALL) NOPASSWD:ALL
