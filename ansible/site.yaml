@@ -8,6 +8,11 @@
   roles:
    - role: apache2
 
+- hosts: servidores_web
+  become: true
+  roles:
+   - role: router
+
 - hosts: servidores_bd
   become: true
   roles:
