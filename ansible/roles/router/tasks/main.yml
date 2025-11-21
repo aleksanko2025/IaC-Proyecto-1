@@ -3,6 +3,7 @@
     path: /etc/sysctl.conf
     regexp: '^net.ipv4.ip_forward='
     line: 'net.ipv4.ip_forward=1'
+    create: yes
   when: ansible_distribution == "Debian"
 
 - name: Recargar sysctl en Debian

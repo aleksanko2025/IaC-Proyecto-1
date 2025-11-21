@@ -1,8 +1,3 @@
-- hosts: all
-  become: true
-  roles:
-   - role: commons
-
 - hosts: servidores_web
   become: true
   roles:
@@ -12,6 +7,11 @@
   become: true
   roles:
    - role: router
+
+- hosts: all
+  become: true
+  roles:
+   - role: commons
 
 - hosts: servidores_bd
   become: true
