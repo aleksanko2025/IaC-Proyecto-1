@@ -7,8 +7,27 @@
       - php-mysql
       - php-mbstring
       - git
+      - php-gd
+      - php-xml
+      - php-mbstring
+      - php-curl
+      - php-intl
+      - php-zip
     state: present
     update_cache: yes
+
+- name: Descargar WordPress
+  unarchive:
+    src: https://wordpress.org/latest.tar.gz
+    dest: /var/www/
+    remote_src: yes
+
+- name: Copiar directorio Wordpress
+  ansible.builtin.copy:
+    src: wp-config.php
+    dest: /var/www/wordpress
+    mode: '0755'
+    directory_mode: '0755'
 
 - name: Activar modulos de apache2
   community.general.apache2_module:

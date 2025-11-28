@@ -8,6 +8,13 @@ virtualhosts:
       errorlog: error_example
       accesslog: acceses_example
 
+  - name: wordpress
+    datos:
+      nameserver: www.wordpkosenko.org 
+      documentroot: /var/www/wordpress
+      errorlog: error_example
+      accesslog: acceses_example
+
 
 # Lista con los módulos que hay que activar
 mods_enabled:
@@ -27,3 +34,8 @@ guestbook_db_host: "mariadb.example.org"
 guestbook_db_user: "guestbook_user"
 guestbook_db_password: "guestbook_pass"
 guestbook_db_name: "guestbook_db"
+
+wordpress_db_host: "mariadb.example.org"
+wordpress_db_user: "wordp_user"
+wordpress_db_password: "wordp_pass"
+wordpress_db_name: "wordpress_db"

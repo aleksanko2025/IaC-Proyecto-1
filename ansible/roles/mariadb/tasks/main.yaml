@@ -12,6 +12,42 @@
     state: present
     login_unix_socket: /var/run/mysqld/mysqld.sock
 
+- name: Crear base de datos WordPress
+  community.mysql.mysql_db:
+    name: "{{ wordpress_db_name }}"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Crear usuario WordPress
+  community.mysql.mysql_user:
+    name: "{{ wordpress_db_user }}"
+    password: "{{ wordpress_db_password }}"
+    host: "%"
+    priv: "{{ wordpress_db_name }}.*:ALL"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Copiar archivo SQL desde el rol
+  ansible.builtin.copy:
+    src: wordpress_db_backup.sql
+    dest: /tmp/wordpress_db_backup.sql
+    mode: '0644'
+
+- name: Verificar si la base de datos ya tiene tablas
+  ansible.builtin.shell: mysql -u "{{ wordpress_db_user }}" -p"{{ wordpress_db_password }}" -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'wordpress_db';"
+  register: table_count
+  become: true
+  changed_when: false
+
+- name: Importar base de datos WordPress
+  ansible.builtin.shell: mysql -u "{{ wordpress_db_user }}" -p"{{ wordpress_db_password }}" wordpress_db < /tmp/wordpress_db_backup.sql
+  become: true
+  when: table_count.stdout | int == 0
+
+#- name: Importar base de datos WordPress
+#  ansible.builtin.shell: mysql -u "{{ wordpress_db_user }}" -p"{{ wordpress_db_password }}" wordpress_db < /tmp/wordpress_db_backup.sql
+#  become: true
+
 - name: Crear usuario y otorgar privilegios
   community.mysql.mysql_user:
     name: "{{ guestbook_db_user }}"
@@ -39,8 +75,6 @@
     target: /tmp/schema.sql
     login_unix_socket: /var/run/mysqld/mysqld.sock
   when: table_check.query_result[0] | length == 0
-
-
 
 - name: Configurar MariaDB para escuchar en todas las interfaces
   ansible.builtin.lineinfile:
