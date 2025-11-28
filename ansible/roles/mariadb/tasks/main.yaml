@@ -33,20 +33,16 @@
     dest: /tmp/wordpress_db_backup.sql
     mode: '0644'
 
-- name: Verificar si la base de datos ya tiene tablas
-  ansible.builtin.shell: mysql -u "{{ wordpress_db_user }}" -p"{{ wordpress_db_password }}" -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'wordpress_db';"
-  register: table_count
-  become: true
-  changed_when: false
+- name: Comprobar si la tabla 'wp_posts' existe
+  community.mysql.mysql_query:
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    query: "SHOW TABLES FROM wordpress_db LIKE 'wp_posts';"
+  register: table_wp
 
 - name: Importar base de datos WordPress
   ansible.builtin.shell: mysql -u "{{ wordpress_db_user }}" -p"{{ wordpress_db_password }}" wordpress_db < /tmp/wordpress_db_backup.sql
   become: true
-  when: table_count.stdout | int == 0
-
-#- name: Importar base de datos WordPress
-#  ansible.builtin.shell: mysql -u "{{ wordpress_db_user }}" -p"{{ wordpress_db_password }}" wordpress_db < /tmp/wordpress_db_backup.sql
-#  become: true
+  when: table_wp.query_result[0] | length == 0
 
 - name: Crear usuario y otorgar privilegios
   community.mysql.mysql_user:
