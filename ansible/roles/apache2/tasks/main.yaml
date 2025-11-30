@@ -22,7 +22,7 @@
     dest: /var/www/
     remote_src: yes
 
-- name: Copiar directorio Wordpress
+- name: Copiar fichero Wordpress
   ansible.builtin.copy:
     src: wp-config.php
     dest: /var/www/wordpress
