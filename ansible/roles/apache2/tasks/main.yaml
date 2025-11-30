@@ -13,6 +13,7 @@
       - php-curl
       - php-intl
       - php-zip
+      - php-json
     state: present
     update_cache: yes
 
@@ -82,4 +83,51 @@
     dest: "/{{ base_web_path }}/config.php"
     owner: www-data
     group: www-data
+    
+- name: Instalar phpmyadmin
+  apt:
+    name:
+      - phpmyadmin
+    state: present
+  environment:
+        DEBIAN_FRONTEND: noninteractive
+
+- name: Copiar config.inc.php personalizado
+  copy:
+    src: config.inc.php
+    dest: /etc/phpmyadmin/config.inc.php
+
+- name: Crear archivo de configuración de Apache para phpMyAdmin
+  copy:
+    dest: /etc/apache2/conf-available/phpmyadmin.conf
+    content: |
+          Alias /phpmyadmin /usr/share/phpmyadmin
+
+          <Directory /usr/share/phpmyadmin>
+              Options SymLinksIfOwnerMatch
+              DirectoryIndex index.php
+
+              <IfModule mod_php.c>
+                  AddType application/x-httpd-php .php
+              </IfModule>
+
+              <FilesMatch "\.php$">
+                  SetHandler application/x-httpd-php
+              </FilesMatch>
+
+              Require all granted
+          </Directory>
+
+- name: Habilitar configuración phpMyAdmin en Apache
+  command: a2enconf phpmyadmin
+  args:
+    creates: /etc/apache2/conf-enabled/phpmyadmin.conf
+
+- name: Habilitar phpmyadmin
+  command: a2enconf phpmyadmin
+
+- name: Reiniciar Apache
+  service:
+      name: apache2
+      state: restarted
     

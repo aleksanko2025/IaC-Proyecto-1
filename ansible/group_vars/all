@@ -39,3 +39,6 @@ wordpress_db_host: "mariadb.example.org"
 wordpress_db_user: "wordp_user"
 wordpress_db_password: "wordp_pass"
 wordpress_db_name: "wordpress_db"
+
+phpmyadmin_user: "phpadmin"
+phpmyadmin_password: "admin"
